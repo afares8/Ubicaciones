@@ -4,12 +4,11 @@ from sqlalchemy.sql import func
 from app.database import Base
 
 class StockLocation(Base):
-    __tablename__ = "stock_location"
-    __table_args__ = {"schema": "wms"}
+    __tablename__ = "wms_stock_location"
 
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     whs_code = Column(String(8), nullable=False)
-    location_id = Column(Integer, ForeignKey("wms.location.id"), nullable=False)
+    location_id = Column(Integer, ForeignKey("wms_location.id"), nullable=False)
     item_code = Column(String(50), nullable=False)
     item_name = Column(String(200), nullable=True)
     lot_no = Column(String(100), nullable=True)
