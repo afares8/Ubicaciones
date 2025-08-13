@@ -18,6 +18,7 @@ A comprehensive Warehouse Management System (WMS) for bin location tracking and 
 - Bulk location generation with pattern support
 - Location attributes and capacity management
 - ZPL label generation and printing
+- **Multi-language Support**: Complete Spanish interface (Sistema de Inventario por Ubicaciones)
 
 ### Stock Management
 - Real-time stock tracking by location
