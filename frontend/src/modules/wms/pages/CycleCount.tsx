@@ -28,7 +28,7 @@ const CycleCount: React.FC = () => {
     () => wmsApi.locations.getByWarehouse(selectedWarehouse),
     {
       onError: (error: any) => {
-        setError(error.response?.data?.message || 'Failed to load locations');
+        setError(error.response?.data?.message || 'Error al cargar ubicaciones');
       },
     }
   );
@@ -38,7 +38,7 @@ const CycleCount: React.FC = () => {
     () => wmsApi.counts.list({ whs: selectedWarehouse, limit: 50 }),
     {
       onError: (error: any) => {
-        setError(error.response?.data?.message || 'Failed to load count sessions');
+        setError(error.response?.data?.message || 'Error al cargar sesiones de conteo');
       },
     }
   );
@@ -49,7 +49,7 @@ const CycleCount: React.FC = () => {
     {
       enabled: !!selectedSession,
       onError: (error: any) => {
-        setError(error.response?.data?.message || 'Failed to load session details');
+        setError(error.response?.data?.message || 'Error al cargar detalles de sesión');
       },
     }
   );
@@ -59,12 +59,12 @@ const CycleCount: React.FC = () => {
     {
       onSuccess: () => {
         clearError();
-        alert('Count session created successfully');
+        alert('Sesión de conteo creada exitosamente');
         setSelectedLocations([]);
         refetchSessions();
       },
       onError: (error: any) => {
-        setError(error.response?.data?.message || 'Failed to create count session');
+        setError(error.response?.data?.message || 'Error al crear sesión de conteo');
       },
     }
   );
@@ -75,11 +75,11 @@ const CycleCount: React.FC = () => {
     {
       onSuccess: () => {
         clearError();
-        alert('Counts entered successfully');
+        alert('Conteos ingresados exitosamente');
         queryClient.invalidateQueries(['count-session-details', selectedSession?.id]);
       },
       onError: (error: any) => {
-        setError(error.response?.data?.message || 'Failed to enter counts');
+        setError(error.response?.data?.message || 'Error al ingresar conteos');
       },
     }
   );
@@ -90,19 +90,19 @@ const CycleCount: React.FC = () => {
     {
       onSuccess: () => {
         clearError();
-        alert('Count adjustments applied successfully');
+        alert('Ajustes de conteo aplicados exitosamente');
         refetchSessions();
         queryClient.invalidateQueries(['count-session-details', selectedSession?.id]);
       },
       onError: (error: any) => {
-        setError(error.response?.data?.message || 'Failed to apply count adjustments');
+        setError(error.response?.data?.message || 'Error al aplicar ajustes de conteo');
       },
     }
   );
 
   const handleCreateSession = () => {
     if (selectedLocations.length === 0) {
-      setError('Please select at least one location');
+      setError('Por favor seleccione al menos una ubicación');
       return;
     }
 
@@ -121,7 +121,7 @@ const CycleCount: React.FC = () => {
     }));
 
     if (counts.length === 0) {
-      setError('Please enter at least one count');
+      setError('Por favor ingrese al menos un conteo');
       return;
     }
 
@@ -138,37 +138,37 @@ const CycleCount: React.FC = () => {
       sessionId: selectedSession.id,
       request: {
         createSapAdjustments: true,
-        comment: 'Cycle count adjustment',
+        comment: 'Ajuste de conteo cíclico',
       },
     });
   };
 
   const sessionColumns: GridColDef[] = [
-    { field: 'id', headerName: 'Session ID', width: 100 },
-    { field: 'whs_code', headerName: 'Warehouse', width: 120 },
+    { field: 'id', headerName: 'ID de Sesión', width: 100 },
+    { field: 'whs_code', headerName: 'Almacén', width: 120 },
     {
       field: 'status',
-      headerName: 'Status',
+      headerName: 'Estado',
       width: 120,
       renderCell: (params) => (
         <Chip
-          label={params.value}
+          label={params.value === 'OPEN' ? 'ABIERTO' : params.value === 'CLOSED' ? 'CERRADO' : 'APLICADO'}
           color={params.value === 'OPEN' ? 'primary' : 'default'}
           size="small"
         />
       ),
     },
-    { field: 'created_by', headerName: 'Created By', width: 150 },
-    { field: 'created_at', headerName: 'Created At', width: 180, type: 'dateTime' },
+    { field: 'created_by', headerName: 'Creado Por', width: 150 },
+    { field: 'created_at', headerName: 'Fecha de Creación', width: 180, type: 'dateTime' },
   ];
 
   const detailColumns: GridColDef[] = [
-    { field: 'item_code', headerName: 'Item Code', width: 150 },
-    { field: 'lot_no', headerName: 'Lot/Serial', width: 120 },
-    { field: 'expected_qty', headerName: 'Expected', width: 100, type: 'number' },
+    { field: 'item_code', headerName: 'Código de Artículo', width: 150 },
+    { field: 'lot_no', headerName: 'Lote/Serie', width: 120 },
+    { field: 'expected_qty', headerName: 'Esperado', width: 100, type: 'number' },
     {
       field: 'counted_qty',
-      headerName: 'Counted',
+      headerName: 'Contado',
       width: 120,
       renderCell: (params) => (
         <TextField
@@ -185,11 +185,11 @@ const CycleCount: React.FC = () => {
     },
     {
       field: 'adjusted',
-      headerName: 'Adjusted',
+      headerName: 'Ajustado',
       width: 100,
       renderCell: (params) => (
         <Chip
-          label={params.value ? 'Yes' : 'No'}
+          label={params.value ? 'Sí' : 'No'}
           color={params.value ? 'success' : 'default'}
           size="small"
         />
@@ -200,7 +200,7 @@ const CycleCount: React.FC = () => {
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
-        Cycle Count
+        Conteo Cíclico
       </Typography>
       
       <Grid container spacing={3}>
@@ -208,17 +208,17 @@ const CycleCount: React.FC = () => {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Create New Count Session
+                Crear Nueva Sesión de Conteo
               </Typography>
               
               <Autocomplete
                 multiple
                 options={locations?.data || []}
-                getOptionLabel={(option) => `${option.code} - ${option.name || 'No name'}`}
+                getOptionLabel={(option) => `${option.code} - ${option.name || 'Sin nombre'}`}
                 value={selectedLocations}
                 onChange={(_, newValue) => setSelectedLocations(newValue)}
                 renderInput={(params) => (
-                  <TextField {...params} label="Select Locations" margin="normal" />
+                  <TextField {...params} label="Seleccionar Ubicaciones" margin="normal" />
                 )}
               />
               
@@ -228,7 +228,7 @@ const CycleCount: React.FC = () => {
                 disabled={createSessionMutation.isLoading}
                 sx={{ mt: 2 }}
               >
-                {createSessionMutation.isLoading ? 'Creating...' : 'Create Count Session'}
+                {createSessionMutation.isLoading ? 'Creando...' : 'Crear Sesión de Conteo'}
               </Button>
             </CardContent>
           </Card>
@@ -238,16 +238,20 @@ const CycleCount: React.FC = () => {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Count Sessions
+                Sesiones de Conteo
               </Typography>
               
               <Box sx={{ height: 300, mt: 2 }}>
                 <DataGrid
                   rows={countSessions?.data?.data || []}
                   columns={sessionColumns}
-                  pageSize={5}
-                  rowsPerPageOptions={[5, 10]}
-                  disableSelectionOnClick
+                  initialState={{
+                    pagination: {
+                      paginationModel: { page: 0, pageSize: 5 },
+                    },
+                  }}
+                  pageSizeOptions={[5, 10]}
+                  disableRowSelectionOnClick
                   onRowClick={(params) => setSelectedSession(params.row)}
                 />
               </Box>
@@ -260,12 +264,12 @@ const CycleCount: React.FC = () => {
             <Card>
               <CardContent>
                 <Typography variant="h6" gutterBottom>
-                  Count Session Details - {selectedSession.id}
+                  Detalles de Sesión de Conteo - {selectedSession.id}
                 </Typography>
                 
                 <Box sx={{ mb: 2 }}>
                   <Typography variant="body1">
-                    Status: <Chip label={selectedSession.status} size="small" />
+                    Estado: <Chip label={selectedSession.status === 'OPEN' ? 'ABIERTO' : selectedSession.status === 'CLOSED' ? 'CERRADO' : 'APLICADO'} size="small" />
                   </Typography>
                 </Box>
                 
@@ -273,9 +277,13 @@ const CycleCount: React.FC = () => {
                   <DataGrid
                     rows={sessionDetails?.data?.data?.details || []}
                     columns={detailColumns}
-                    pageSize={10}
-                    rowsPerPageOptions={[10, 25]}
-                    disableSelectionOnClick
+                    initialState={{
+                      pagination: {
+                        paginationModel: { page: 0, pageSize: 10 },
+                      },
+                    }}
+                    pageSizeOptions={[10, 25]}
+                    disableRowSelectionOnClick
                   />
                 </Box>
                 
@@ -286,7 +294,7 @@ const CycleCount: React.FC = () => {
                       onClick={handleEnterCounts}
                       disabled={enterCountsMutation.isLoading}
                     >
-                      {enterCountsMutation.isLoading ? 'Saving...' : 'Save Counts'}
+                      {enterCountsMutation.isLoading ? 'Guardando...' : 'Guardar Conteos'}
                     </Button>
                     <Button
                       variant="contained"
@@ -294,7 +302,7 @@ const CycleCount: React.FC = () => {
                       onClick={handleApplyCounts}
                       disabled={applyCountsMutation.isLoading}
                     >
-                      {applyCountsMutation.isLoading ? 'Applying...' : 'Apply Adjustments'}
+                      {applyCountsMutation.isLoading ? 'Aplicando...' : 'Aplicar Ajustes'}
                     </Button>
                   </Box>
                 )}

@@ -4,15 +4,14 @@ from sqlalchemy.sql import func
 from app.database import Base
 
 class Movement(Base):
-    __tablename__ = "movement"
-    __table_args__ = {"schema": "wms"}
+    __tablename__ = "wms_movement"
 
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     type = Column(String(24), nullable=False)
     whs_code_from = Column(String(8), nullable=True)
-    location_id_from = Column(Integer, ForeignKey("wms.location.id"), nullable=True)
+    location_id_from = Column(Integer, ForeignKey("wms_location.id"), nullable=True)
     whs_code_to = Column(String(8), nullable=True)
-    location_id_to = Column(Integer, ForeignKey("wms.location.id"), nullable=True)
+    location_id_to = Column(Integer, ForeignKey("wms_location.id"), nullable=True)
     item_code = Column(String(50), nullable=False)
     lot_no = Column(String(100), nullable=True)
     qty = Column(Numeric(18, 3), nullable=False)

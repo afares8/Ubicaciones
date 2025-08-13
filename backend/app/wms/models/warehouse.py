@@ -3,8 +3,7 @@ from sqlalchemy.orm import relationship
 from app.database import Base
 
 class Warehouse(Base):
-    __tablename__ = "warehouse"
-    __table_args__ = {"schema": "wms"}
+    __tablename__ = "wms_warehouse"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     whs_code = Column(String(8), nullable=False, unique=True)
