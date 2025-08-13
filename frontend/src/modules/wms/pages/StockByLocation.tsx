@@ -25,7 +25,7 @@ const StockByLocation: React.FC = () => {
     () => wmsApi.locations.getByWarehouse(selectedWarehouse),
     {
       onError: (error: any) => {
-        setError(error.response?.data?.message || 'Failed to load locations');
+        setError(error.response?.data?.message || 'Error al cargar ubicaciones');
       },
     }
   );
@@ -36,7 +36,7 @@ const StockByLocation: React.FC = () => {
     {
       enabled: !!selectedLocation,
       onError: (error: any) => {
-        setError(error.response?.data?.message || 'Failed to load stock');
+        setError(error.response?.data?.message || 'Error al cargar inventario');
       },
     }
   );
@@ -47,7 +47,7 @@ const StockByLocation: React.FC = () => {
     {
       enabled: itemCode.length > 2,
       onError: (error: any) => {
-        setError(error.response?.data?.message || 'Failed to load stock by item');
+        setError(error.response?.data?.message || 'Error al cargar inventario por artículo');
       },
     }
   );
@@ -57,31 +57,31 @@ const StockByLocation: React.FC = () => {
     () => wmsApi.stock.lowStock({ whs: selectedWarehouse, threshold_pct: 20 }),
     {
       onError: (error: any) => {
-        setError(error.response?.data?.message || 'Failed to load low stock data');
+        setError(error.response?.data?.message || 'Error al cargar datos de stock bajo');
       },
     }
   );
 
   const stockColumns: GridColDef[] = [
-    { field: 'item_code', headerName: 'Item Code', width: 150 },
-    { field: 'item_name', headerName: 'Item Name', width: 200 },
-    { field: 'lot_no', headerName: 'Lot/Serial', width: 120 },
-    { field: 'qty', headerName: 'Quantity', width: 100, type: 'number' },
-    { field: 'uom', headerName: 'UoM', width: 80 },
-    { field: 'last_updated', headerName: 'Last Updated', width: 150, type: 'dateTime' },
+    { field: 'item_code', headerName: 'Código de Artículo', width: 150 },
+    { field: 'item_name', headerName: 'Nombre del Artículo', width: 200 },
+    { field: 'lot_no', headerName: 'Lote/Serie', width: 120 },
+    { field: 'qty', headerName: 'Cantidad', width: 100, type: 'number' },
+    { field: 'uom', headerName: 'UdM', width: 80 },
+    { field: 'last_updated', headerName: 'Última Actualización', width: 150, type: 'dateTime' },
   ];
 
   const lowStockColumns: GridColDef[] = [
-    { field: 'location_code', headerName: 'Location', width: 150 },
-    { field: 'current_qty', headerName: 'Current Qty', width: 100, type: 'number' },
-    { field: 'capacity_qty', headerName: 'Capacity', width: 100, type: 'number' },
-    { field: 'utilization_pct', headerName: 'Utilization %', width: 120, type: 'number' },
+    { field: 'location_code', headerName: 'Ubicación', width: 150 },
+    { field: 'current_qty', headerName: 'Cant. Actual', width: 100, type: 'number' },
+    { field: 'capacity_qty', headerName: 'Capacidad', width: 100, type: 'number' },
+    { field: 'utilization_pct', headerName: 'Utilización %', width: 120, type: 'number' },
   ];
 
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
-        Stock by Location
+        Stock por Ubicación
       </Typography>
       
       <Grid container spacing={3}>
@@ -89,16 +89,16 @@ const StockByLocation: React.FC = () => {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Stock by Location
+                Stock por Ubicación
               </Typography>
               
               <Autocomplete
                 options={locations?.data || []}
-                getOptionLabel={(option) => `${option.code} - ${option.name || 'No name'}`}
+                getOptionLabel={(option) => `${option.code} - ${option.name || 'Sin nombre'}`}
                 value={selectedLocation}
                 onChange={(_, newValue) => setSelectedLocation(newValue)}
                 renderInput={(params) => (
-                  <TextField {...params} label="Select Location" margin="normal" />
+                  <TextField {...params} label="Seleccionar Ubicación" margin="normal" />
                 )}
               />
               
@@ -107,9 +107,13 @@ const StockByLocation: React.FC = () => {
                   rows={stockByLocation?.data || []}
                   columns={stockColumns}
                   loading={stockLoading}
-                  pageSize={5}
-                  rowsPerPageOptions={[5, 10, 25]}
-                  disableSelectionOnClick
+                  initialState={{
+                    pagination: {
+                      paginationModel: { page: 0, pageSize: 5 },
+                    },
+                  }}
+                  pageSizeOptions={[5, 10, 25]}
+                  disableRowSelectionOnClick
                 />
               </Box>
             </CardContent>
@@ -120,30 +124,34 @@ const StockByLocation: React.FC = () => {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Stock by Item
+                Stock por Artículo
               </Typography>
               
               <TextField
                 fullWidth
-                label="Item Code"
+                label="Código de Artículo"
                 value={itemCode}
                 onChange={(e) => setItemCode(e.target.value)}
                 margin="normal"
-                helperText="Enter at least 3 characters"
+                helperText="Ingrese al menos 3 caracteres"
               />
               
               {stockByItem?.data && (
                 <Box sx={{ mt: 2 }}>
                   <Typography variant="body1" gutterBottom>
-                    <strong>Item:</strong> {stockByItem.data.item_code} - {stockByItem.data.item_name}
+                    <strong>Artículo:</strong> {stockByItem.data.item_code} - {stockByItem.data.item_name}
                   </Typography>
                   <Box sx={{ height: 250, mt: 1 }}>
                     <DataGrid
                       rows={stockByItem.data.locations || []}
                       columns={stockColumns}
-                      pageSize={5}
-                      rowsPerPageOptions={[5, 10]}
-                      disableSelectionOnClick
+                      initialState={{
+                        pagination: {
+                          paginationModel: { page: 0, pageSize: 5 },
+                        },
+                      }}
+                      pageSizeOptions={[5, 10]}
+                      disableRowSelectionOnClick
                     />
                   </Box>
                 </Box>
@@ -156,16 +164,20 @@ const StockByLocation: React.FC = () => {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Low Stock Locations (Below 20% Capacity)
+                Ubicaciones con Stock Bajo (Menos del 20% de Capacidad)
               </Typography>
               
               <Box sx={{ height: 300, mt: 2 }}>
                 <DataGrid
                   rows={lowStockData?.data?.data || []}
                   columns={lowStockColumns}
-                  pageSize={10}
-                  rowsPerPageOptions={[10, 25, 50]}
-                  disableSelectionOnClick
+                  initialState={{
+                    pagination: {
+                      paginationModel: { page: 0, pageSize: 10 },
+                    },
+                  }}
+                  pageSizeOptions={[10, 25, 50]}
+                  disableRowSelectionOnClick
                   getRowId={(row) => row.location_id}
                 />
               </Box>

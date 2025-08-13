@@ -23,11 +23,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 const drawerWidth = 240;
 
 const menuItems = [
-  { text: 'Warehouse Designer', icon: <Warehouse />, path: '/warehouse-designer' },
-  { text: 'Bin Manager', icon: <LocationOn />, path: '/bin-manager' },
-  { text: 'Stock by Location', icon: <Inventory />, path: '/stock-by-location' },
-  { text: 'Operations', icon: <SwapHoriz />, path: '/operations' },
-  { text: 'Cycle Count', icon: <Assessment />, path: '/cycle-count' },
+  { text: 'Diseñador de Almacén', icon: <Warehouse />, path: '/warehouse-designer' },
+  { text: 'Gestor de Ubicaciones', icon: <LocationOn />, path: '/bin-manager' },
+  { text: 'Stock por Ubicación', icon: <Inventory />, path: '/stock-by-location' },
+  { text: 'Operaciones', icon: <SwapHoriz />, path: '/operations' },
+  { text: 'Conteo Cíclico', icon: <Assessment />, path: '/cycle-count' },
 ];
 
 interface WMSLayoutProps {
@@ -46,7 +46,7 @@ const WMSLayout: React.FC<WMSLayoutProps> = ({ children }) => {
       >
         <Toolbar>
           <Typography variant="h6" noWrap component="div">
-            WMS - Bin Locations Inventory System
+            WMS - Sistema de Inventario por Ubicaciones
           </Typography>
         </Toolbar>
       </AppBar>

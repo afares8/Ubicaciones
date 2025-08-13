@@ -28,7 +28,7 @@ const BinManager: React.FC = () => {
     {
       enabled: searchQuery.length > 2,
       onError: (error: any) => {
-        setError(error.response?.data?.message || 'Failed to search bins');
+        setError(error.response?.data?.message || 'Error al buscar ubicaciones');
       },
     }
   );
@@ -46,25 +46,25 @@ const BinManager: React.FC = () => {
       wmsApi.labels.generate(data.locationId, data.format),
     {
       onSuccess: () => {
-        alert('Label sent to printer successfully');
+        alert('Etiqueta enviada a impresora exitosamente');
       },
       onError: (error: any) => {
-        setError(error.response?.data?.message || 'Failed to print label');
+        setError(error.response?.data?.message || 'Error al imprimir etiqueta');
       },
     }
   );
 
   const columns: GridColDef[] = [
-    { field: 'code', headerName: 'Bin Code', width: 200 },
-    { field: 'name', headerName: 'Name', width: 150 },
-    { field: 'type', headerName: 'Type', width: 120 },
+    { field: 'code', headerName: 'Código de Ubicación', width: 200 },
+    { field: 'name', headerName: 'Nombre', width: 150 },
+    { field: 'type', headerName: 'Tipo', width: 120 },
     {
       field: 'is_active',
-      headerName: 'Status',
+      headerName: 'Estado',
       width: 100,
       renderCell: (params) => (
         <Chip
-          label={params.value ? 'Active' : 'Inactive'}
+          label={params.value ? 'Activo' : 'Inactivo'}
           color={params.value ? 'success' : 'default'}
           size="small"
         />
@@ -72,7 +72,7 @@ const BinManager: React.FC = () => {
     },
     {
       field: 'actions',
-      headerName: 'Actions',
+      headerName: 'Acciones',
       width: 150,
       renderCell: (params) => (
         <Box>
@@ -96,7 +96,7 @@ const BinManager: React.FC = () => {
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
-        Bin Manager
+        Gestor de Ubicaciones
       </Typography>
       
       <Grid container spacing={3}>
@@ -104,16 +104,16 @@ const BinManager: React.FC = () => {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Search Bins
+                Buscar Ubicaciones
               </Typography>
               
               <TextField
                 fullWidth
-                label="Search by bin code or name"
+                label="Buscar por código o nombre de ubicación"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 margin="normal"
-                helperText="Enter at least 3 characters to search"
+                helperText="Ingrese al menos 3 caracteres para buscar"
               />
               
               <Box sx={{ height: 400, mt: 2 }}>
@@ -121,9 +121,13 @@ const BinManager: React.FC = () => {
                   rows={searchResults?.data || []}
                   columns={columns}
                   loading={isLoading}
-                  pageSize={10}
-                  rowsPerPageOptions={[10, 25, 50]}
-                  disableSelectionOnClick
+                  initialState={{
+                    pagination: {
+                      paginationModel: { page: 0, pageSize: 10 },
+                    },
+                  }}
+                  pageSizeOptions={[10, 25, 50]}
+                  disableRowSelectionOnClick
                 />
               </Box>
             </CardContent>
@@ -134,47 +138,47 @@ const BinManager: React.FC = () => {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Bin Details
+                Detalles de Ubicación
               </Typography>
               
               {selectedBin ? (
                 <Box>
                   <Typography variant="body1" gutterBottom>
-                    <strong>Code:</strong> {selectedBin.code}
+                    <strong>Código:</strong> {selectedBin.code}
                   </Typography>
                   <Typography variant="body1" gutterBottom>
-                    <strong>Name:</strong> {selectedBin.name || 'N/A'}
+                    <strong>Nombre:</strong> {selectedBin.name || 'N/A'}
                   </Typography>
                   <Typography variant="body1" gutterBottom>
-                    <strong>Type:</strong> {selectedBin.type || 'N/A'}
+                    <strong>Tipo:</strong> {selectedBin.type || 'N/A'}
                   </Typography>
                   <Typography variant="body1" gutterBottom>
-                    <strong>Section:</strong> {selectedBin.section || 'N/A'}
+                    <strong>Sección:</strong> {selectedBin.section || 'N/A'}
                   </Typography>
                   <Typography variant="body1" gutterBottom>
-                    <strong>Aisle:</strong> {selectedBin.aisle || 'N/A'}
+                    <strong>Pasillo:</strong> {selectedBin.aisle || 'N/A'}
                   </Typography>
                   <Typography variant="body1" gutterBottom>
-                    <strong>Rack:</strong> {selectedBin.rack || 'N/A'}
+                    <strong>Estante:</strong> {selectedBin.rack || 'N/A'}
                   </Typography>
                   <Typography variant="body1" gutterBottom>
-                    <strong>Level:</strong> {selectedBin.level || 'N/A'}
+                    <strong>Nivel:</strong> {selectedBin.level || 'N/A'}
                   </Typography>
                   
                   {capacityData?.data && (
                     <Box sx={{ mt: 2 }}>
                       <Typography variant="h6" gutterBottom>
-                        Capacity Information
+                        Información de Capacidad
                       </Typography>
                       <Typography variant="body2">
-                        Capacity: {capacityData.data.capacity_qty || 'N/A'} {capacityData.data.capacity_uom || ''}
+                        Capacidad: {capacityData.data.capacity_qty || 'N/A'} {capacityData.data.capacity_uom || ''}
                       </Typography>
                       <Typography variant="body2">
-                        Current: {capacityData.data.current_qty} ({capacityData.data.current_items} items)
+                        Actual: {capacityData.data.current_qty} ({capacityData.data.current_items} artículos)
                       </Typography>
                       {capacityData.data.utilization_pct && (
                         <Typography variant="body2">
-                          Utilization: {capacityData.data.utilization_pct.toFixed(1)}%
+                          Utilización: {capacityData.data.utilization_pct.toFixed(1)}%
                         </Typography>
                       )}
                     </Box>
@@ -187,12 +191,12 @@ const BinManager: React.FC = () => {
                     sx={{ mt: 2 }}
                     disabled={printLabelMutation.isLoading}
                   >
-                    Print Label
+                    Imprimir Etiqueta
                   </Button>
                 </Box>
               ) : (
                 <Typography color="text.secondary">
-                  Select a bin to view details
+                  Seleccione una ubicación para ver detalles
                 </Typography>
               )}
             </CardContent>

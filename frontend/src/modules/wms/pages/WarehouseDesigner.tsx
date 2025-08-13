@@ -31,7 +31,7 @@ const WarehouseDesigner: React.FC = () => {
     () => wmsApi.locations.getByWarehouse(selectedWarehouse),
     {
       onError: (error: any) => {
-        setError(error.response?.data?.message || 'Failed to load locations');
+        setError(error.response?.data?.message || 'Error al cargar ubicaciones');
       },
     }
   );
@@ -43,10 +43,10 @@ const WarehouseDesigner: React.FC = () => {
       onSuccess: (response) => {
         clearError();
         queryClient.invalidateQueries(['locations', selectedWarehouse]);
-        alert(`Successfully created ${response.data.data.created} locations`);
+        alert(`Se crearon exitosamente ${response.data.data.created} ubicaciones`);
       },
       onError: (error: any) => {
-        setError(error.response?.data?.message || 'Failed to generate locations');
+        setError(error.response?.data?.message || 'Error al generar ubicaciones');
       },
     }
   );
@@ -56,7 +56,7 @@ const WarehouseDesigner: React.FC = () => {
     try {
       parsedAttributes = attributes ? JSON.parse(attributes) : undefined;
     } catch (e) {
-      setError('Invalid JSON in attributes field');
+      setError('JSON inválido en el campo de atributos');
       return;
     }
 
@@ -70,7 +70,7 @@ const WarehouseDesigner: React.FC = () => {
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
-        Warehouse Designer
+        Diseñador de Almacén
       </Typography>
       
       <Grid container spacing={3}>
@@ -78,41 +78,41 @@ const WarehouseDesigner: React.FC = () => {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Bulk Location Generator
+                Generador Masivo de Ubicaciones
               </Typography>
               
               <TextField
                 fullWidth
-                label="Pattern"
+                label="Patrón"
                 value={pattern}
                 onChange={(e) => setPattern(e.target.value)}
                 margin="normal"
-                helperText="Example: SEC{01-03}-AIS{01-10}-RK{01-05}-LV{01-04}-BIN{01-30}"
+                helperText="Ejemplo: SEC{01-03}-PAS{01-10}-EST{01-05}-NIV{01-04}-UBI{01-30}"
               />
               
               <FormControl fullWidth margin="normal">
-                <InputLabel>Location Type</InputLabel>
+                <InputLabel>Tipo de Ubicación</InputLabel>
                 <Select
                   value={locationType}
                   onChange={(e) => setLocationType(e.target.value)}
                 >
-                  <MenuItem value="Receiving">Receiving</MenuItem>
-                  <MenuItem value="Storage">Storage</MenuItem>
+                  <MenuItem value="Recepción">Recepción</MenuItem>
+                  <MenuItem value="Almacenamiento">Almacenamiento</MenuItem>
                   <MenuItem value="Picking">Picking</MenuItem>
-                  <MenuItem value="Returns">Returns</MenuItem>
-                  <MenuItem value="Quarantine">Quarantine</MenuItem>
+                  <MenuItem value="Devoluciones">Devoluciones</MenuItem>
+                  <MenuItem value="Cuarentena">Cuarentena</MenuItem>
                 </Select>
               </FormControl>
               
               <TextField
                 fullWidth
-                label="Attributes (JSON)"
+                label="Atributos (JSON)"
                 value={attributes}
                 onChange={(e) => setAttributes(e.target.value)}
                 margin="normal"
                 multiline
                 rows={3}
-                helperText='Example: {"temp": "ambient", "zone": "A"}'
+                helperText='Ejemplo: {"temp": "ambiente", "zona": "A"}'
               />
               
               <Button
@@ -121,7 +121,7 @@ const WarehouseDesigner: React.FC = () => {
                 disabled={bulkGenerateMutation.isLoading}
                 sx={{ mt: 2 }}
               >
-                {bulkGenerateMutation.isLoading ? 'Generating...' : 'Generate Locations'}
+                {bulkGenerateMutation.isLoading ? 'Generando...' : 'Generar Ubicaciones'}
               </Button>
             </CardContent>
           </Card>
@@ -131,20 +131,20 @@ const WarehouseDesigner: React.FC = () => {
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Current Locations ({locations?.data?.length || 0})
+                Ubicaciones Actuales ({locations?.data?.length || 0})
               </Typography>
               
               {isLoading ? (
-                <Typography>Loading locations...</Typography>
+                <Typography>Cargando ubicaciones...</Typography>
               ) : (
                 <Box sx={{ maxHeight: 400, overflow: 'auto' }}>
                   {locations?.data?.map((location: any) => (
                     <Paper key={location.id} sx={{ p: 1, mb: 1 }}>
                       <Typography variant="body2">
-                        <strong>{location.code}</strong> - {location.name || 'No name'}
+                        <strong>{location.code}</strong> - {location.name || 'Sin nombre'}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        Type: {location.type || 'N/A'} | Active: {location.is_active ? 'Yes' : 'No'}
+                        Tipo: {location.type || 'N/A'} | Activo: {location.is_active ? 'Sí' : 'No'}
                       </Typography>
                     </Paper>
                   ))}
