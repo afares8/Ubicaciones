@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  wms-backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - SAP_DB_HOST=${SAP_DB_HOST}
+      - SAP_DB_PORT=${SAP_DB_PORT}
+      - SAP_DB_NAME=${SAP_DB_NAME}
+      - SAP_DB_USER=${SAP_DB_USER}
+      - SAP_DB_PASSWORD=${SAP_DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - SAP_DI_BASE_URL=${SAP_DI_BASE_URL}
+      - PRINTNODE_API_KEY=${PRINTNODE_API_KEY}
+    depends_on:
+      - sqlserver
+    volumes:
+      - ./backend:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  wms-frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm start
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+
+volumes:
+  sqlserver_data:
